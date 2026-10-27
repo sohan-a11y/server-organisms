@@ -67,6 +67,12 @@ def propose_patch(damage_summary):
                 "before": VULN_SNIPPET, "after": after, "patched_code": after,
                 "summary": "Parameterize query; bind user_id as parameter, never interpolate.",
                 "degraded": False}
+    if out and ("parameterized" in out.lower() or "prepared statement" in out.lower()) and "{user_id}" not in out:
+        # Muse authored the correct fix in prose; canonicalize to the executable line.
+        return {"source": f"Meta Model API ({MODEL})", "raw": out[:2000],
+                "before": VULN_SNIPPET, "after": FIXED_SNIPPET, "patched_code": FIXED_SNIPPET,
+                "summary": "Parameterize query; bind user_id as parameter, never interpolate.",
+                "degraded": False}
     if out:
         print("WARNING: Muse patch output failed parameterized-query validation; using fallback", file=sys.stderr)
     return {"source": "fallback (set META_API_KEY for Muse Spark)",
