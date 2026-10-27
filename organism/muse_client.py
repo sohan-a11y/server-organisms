@@ -15,7 +15,7 @@ separately as an advisory field and can never flip the gate.
 import os, json, sys, requests
 
 API_KEY = os.environ.get("META_API_KEY", "")
-MODEL = os.environ.get("META_MODEL", "muse-spark")
+MODEL = os.environ.get("META_MODEL", "muse-spark-1.1")
 BASE = os.environ.get("META_API_BASE", "https://api.meta.ai/v1")
 
 VULN_SNIPPET = 'q = f"SELECT id,name,email FROM users WHERE id = {user_id}"  # string-formatted SQL'

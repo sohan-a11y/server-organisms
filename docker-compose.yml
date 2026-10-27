@@ -32,7 +32,7 @@ services:
       - CANARY_PATCH_FILE=/shared/patched_app.py.canary
       - BROKER_TOKEN=${BROKER_TOKEN:?Set BROKER_TOKEN in .env to a random secret - see .env.example}
       - META_API_KEY=${META_API_KEY:-}
-      - META_MODEL=${META_MODEL:-muse-spark}
+      - META_MODEL=${META_MODEL:-muse-spark-1.1}
       - META_API_BASE=${META_API_BASE:-https://api.meta.ai/v1}
       - ORGANISM_MODE=${ORGANISM_MODE:-suggest}
       - ORGANISM_STATE_FILE=/shared/organism_state.json
