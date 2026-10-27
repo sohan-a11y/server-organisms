@@ -5,7 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Server Organisms — Self-Healing Swarm</title>
 <style>
-  :root { --bg:#101214; --panel:#171a1d; --line:#2a2f33; --text:#e8e6e1; --dim:#9aa0a3; --amber:#e8a317; --red:#e5484d; --green:#46a758; --mono: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  :root { --bg:#f4f6f1; --panel:#ffffff; --line:#d9ded2; --text:#1d2419; --dim:#66705f; --amber:#b97d0a; --red:#c62f34; --green:#2e7d3a; --blue:#2563a8; --mono: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .flow { display:flex; align-items:stretch; gap:0; padding:16px 24px 4px; flex-wrap:wrap; }
+  .step { flex:1 1 150px; background:var(--panel); border:1.5px solid var(--line); padding:14px 12px; text-align:center; min-width:140px; }
+  .step .num { width:34px; height:34px; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:700; background:#e8ede2; color:var(--dim); border:2px solid var(--line); }
+  .step.active { border-color:var(--amber); background:#fff8e6; }
+  .step.active .num { background:var(--amber); color:#fff; border-color:var(--amber); }
+  .step.done { border-color:var(--green); background:#edf7ee; }
+  .step.done .num { background:var(--green); color:#fff; border-color:var(--green); }
+  .step.bad { border-color:var(--red); background:#fdecec; }
+  .step.bad .num { background:var(--red); color:#fff; border-color:var(--red); }
+  .step b { display:block; font-size:14.5px; margin-bottom:4px; }
+  .step span { font-size:12px; color:var(--dim); line-height:1.45; display:block; }
+  .arrow { align-self:center; padding:0 5px; color:var(--dim); font-size:18px; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font-family: Georgia, "Times New Roman", serif; }
   header { display:flex; justify-content:space-between; align-items:baseline; padding:18px 24px 10px; border-bottom:1px solid var(--line); flex-wrap:wrap; gap:8px; }
@@ -18,18 +30,18 @@
   .phase { font-size:30px; font-weight:600; line-height:1.1; }
   .meta { font-family:var(--mono); font-size:12px; color:var(--dim); margin-top:8px; line-height:1.7; }
   .meta b { color:var(--text); }
-  button { display:block; width:100%; text-align:left; background:#1f2326; color:var(--text); border:1px solid var(--line); padding:11px 13px; margin:8px 0; font-family:var(--mono); font-size:13px; cursor:pointer; }
+  button { display:block; width:100%; text-align:left; background:#eef2e8; color:var(--text); border:1px solid var(--line); padding:11px 13px; margin:8px 0; font-family:var(--mono); font-size:13px; cursor:pointer; }
   button:hover { border-color:var(--dim); }
   button:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
-  button.danger { border-color:#5a2b2d; color:#ffb3b5; }
+  button.danger { border-color:#5a2b2d; color:#a11d21; }
   button.heal { border-color:#2f5233; }
   button:disabled { opacity:.45; cursor:not-allowed; }
-  canvas { width:100%; aspect-ratio:1; display:block; background:#0c0e0f; border:1px solid var(--line); }
+  canvas { width:100%; aspect-ratio:1; display:block; background:#f0f3ec; border:1px solid var(--line); }
   .legend { display:flex; gap:14px; font-family:var(--mono); font-size:11px; color:var(--dim); margin-top:8px; }
   .log { font-family:var(--mono); font-size:11.5px; line-height:1.65; max-height:300px; overflow:auto; }
-  .log .ct { color:#6b7276; word-break:break-all; }
+  .log .ct { color:#8a927f; word-break:break-all; }
   .log .intent { color:var(--text); }
-  pre { font-family:var(--mono); font-size:11.5px; white-space:pre-wrap; word-break:break-word; background:#0c0e0f; border:1px solid var(--line); padding:10px; max-height:220px; overflow:auto; }
+  pre { font-family:var(--mono); font-size:11.5px; white-space:pre-wrap; word-break:break-word; background:#f0f3ec; border:1px solid var(--line); padding:10px; max-height:220px; overflow:auto; }
   .verdict { font-family:var(--mono); font-size:14px; padding:10px; border:1px solid var(--line); }
   .pass { color:var(--green); } .fail { color:var(--red); }
   footer { padding:0 24px 20px; color:var(--dim); font-family:var(--mono); font-size:11.5px; line-height:1.7; }
@@ -41,6 +53,13 @@
   <h1>Server Organisms</h1>
   <p>NEURAL CELLULAR AUTOMATA &middot; HOST BROKER &middot; MUSE PATCH / VERIFY</p>
 </header>
+<div class="flow" aria-label="How it works">
+  <div class="step" id="step-1"><div class="num">1</div><b>Your server lives</b><span>App + API run normally. Organisms live inside, watching quietly.</span></div><div class="arrow">→</div>
+  <div class="step" id="step-2"><div class="num">2</div><b>Attacker exploits</b><span>A vulnerability leaks data. Tissue cells around it turn red and die.</span></div><div class="arrow">→</div>
+  <div class="step" id="step-3"><div class="num">3</div><b>Swarm thinks</b><span>Questioner challenges. Path-finder picks least force. Brain recalls learning.</span></div><div class="arrow">→</div>
+  <div class="step" id="step-4"><div class="num">4</div><b>Muse patches, verifier judges</b><span>Patch tested on a canary copy first. Only PASS goes live.</span></div><div class="arrow">→</div>
+  <div class="step" id="step-5"><div class="num">5</div><b>Healed & remembered</b><span>Tissue regrows green. Brain learns. Kill switch can end all life anytime.</span></div>
+</div>
 <main>
   <section aria-label="Controls">
     <h2>Control plane</h2>
@@ -74,7 +93,7 @@
     <h2 style="margin-top:14px">Brain — growable neurons</h2>
     <div class="log" id="brain">—</div>
     <h2 style="margin-top:14px">Ask the organisms (English)</h2>
-    <input id="ask-q" type="text" placeholder="how to stop timing side channel in token compare?" style="width:100%;background:#0c0e0f;color:var(--text);border:1px solid var(--line);padding:10px;font-family:var(--mono);font-size:12px">
+    <input id="ask-q" type="text" placeholder="how to stop timing side channel in token compare?" style="width:100%;background:#f0f3ec;color:var(--text);border:1px solid var(--line);padding:10px;font-family:var(--mono);font-size:12px">
     <button id="btn-ask">Ask (learns via Muse if unknown)</button>
     <button id="btn-heal-auth">Heal class: broken authorization</button>
     <button id="btn-heal-xss">Heal class: XSS</button>
@@ -100,6 +119,11 @@ async function refresh() {
   try {
     const s = await (await fetch(ORG + "/state")).json();
     $("phase").textContent = s.phase.replace(/-/g, " ");
+    const stages = { healthy: [1, "done"], probing: [2, "active"], "under-attack": [2, "bad"], patching: [3, "active"], "patch-ready": [4, "active"], healed: [5, "done"], "patch-rejected": [4, "bad"], killed: [5, "bad"] };
+    for (let i = 1; i <= 5; i++) { const el = $("step-" + i); el.className = "step"; }
+    const st = stages[s.phase] || [1, "active"];
+    for (let i = 1; i < st[0]; i++) $("step-" + i).classList.add("done");
+    $("step-" + st[0]).classList.add(st[1] === "done" ? "done" : st[1]);
     $("phase").style.color = s.phase === "healed" ? "var(--green)" : s.phase === "under-attack" ? "var(--red)" : s.phase === "killed" ? "var(--dim)" : "var(--amber)";
     $("meta").innerHTML = "Lease: <b>" + (s.lease_active ? "ACTIVE" : "WITHDRAWN") + "</b> &middot; Contained: <b>" + s.contained + "</b> &middot; Patched: <b>" + s.patched + "</b><br>Alive cells: <b>" + s.grid.alive_cells + " / " + s.grid.total + "</b>";
     $("alive-count").textContent = s.grid.alive_cells + " alive";
@@ -109,7 +133,7 @@ async function refresh() {
     $("btn-heal").disabled = busy || !s.lease_active;
     const cv = $("grid"), ctx = cv.getContext("2d"), n = 480 / 16;
     s.grid.cells.forEach((row, y) => row.forEach((c, x) => {
-      ctx.fillStyle = c.d > 0.45 ? "#e5484d" : c.s > 0.55 ? "#e8a317" : ("rgba(70,167,88," + (0.25 + c.h * 0.75) + ")");
+      ctx.fillStyle = c.d > 0.45 ? "#d93a3e" : c.s > 0.55 ? "#d99a16" : ("rgba(39,122,52," + (0.45 + c.h * 0.55) + ")");
       ctx.fillRect(x * n + 1, y * n + 1, n - 2, n - 2);
     }));
     const esc = s2 => String(s2).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
