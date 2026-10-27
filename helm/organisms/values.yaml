@@ -1,0 +1,12 @@
+image:
+  victim: newfolder6-victim-api:latest
+  organism: newfolder6-organism:latest
+  dashboard: python:3.12-slim
+brokerToken: ""
+metaApiKey: ""
+metaModel: muse-spark
+mode: suggest
+ports:
+  dashboard: 18000
+  victim: 18001
+  organism: 18002

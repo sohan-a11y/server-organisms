@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Organisms — Self-Healing Swarm</title>
+<style>
+  :root { --bg:#101214; --panel:#171a1d; --line:#2a2f33; --text:#e8e6e1; --dim:#9aa0a3; --amber:#e8a317; --red:#e5484d; --green:#46a758; --mono: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: Georgia, "Times New Roman", serif; }
+  header { display:flex; justify-content:space-between; align-items:baseline; padding:18px 24px 10px; border-bottom:1px solid var(--line); flex-wrap:wrap; gap:8px; }
+  header h1 { font-size:22px; font-weight:600; margin:0; letter-spacing:.2px; }
+  header p { margin:0; color:var(--dim); font-family:var(--mono); font-size:12px; }
+  main { display:grid; grid-template-columns: 340px 1fr 360px; gap:14px; padding:14px; }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  section { background:var(--panel); border:1px solid var(--line); padding:16px; }
+  h2 { font-size:13px; font-family:var(--mono); text-transform:uppercase; letter-spacing:1.2px; color:var(--dim); margin:0 0 12px; font-weight:600; }
+  .phase { font-size:30px; font-weight:600; line-height:1.1; }
+  .meta { font-family:var(--mono); font-size:12px; color:var(--dim); margin-top:8px; line-height:1.7; }
+  .meta b { color:var(--text); }
+  button { display:block; width:100%; text-align:left; background:#1f2326; color:var(--text); border:1px solid var(--line); padding:11px 13px; margin:8px 0; font-family:var(--mono); font-size:13px; cursor:pointer; }
+  button:hover { border-color:var(--dim); }
+  button:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+  button.danger { border-color:#5a2b2d; color:#ffb3b5; }
+  button.heal { border-color:#2f5233; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  canvas { width:100%; aspect-ratio:1; display:block; background:#0c0e0f; border:1px solid var(--line); }
+  .legend { display:flex; gap:14px; font-family:var(--mono); font-size:11px; color:var(--dim); margin-top:8px; }
+  .log { font-family:var(--mono); font-size:11.5px; line-height:1.65; max-height:300px; overflow:auto; }
+  .log .ct { color:#6b7276; word-break:break-all; }
+  .log .intent { color:var(--text); }
+  pre { font-family:var(--mono); font-size:11.5px; white-space:pre-wrap; word-break:break-word; background:#0c0e0f; border:1px solid var(--line); padding:10px; max-height:220px; overflow:auto; }
+  .verdict { font-family:var(--mono); font-size:14px; padding:10px; border:1px solid var(--line); }
+  .pass { color:var(--green); } .fail { color:var(--red); }
+  footer { padding:0 24px 20px; color:var(--dim); font-family:var(--mono); font-size:11.5px; line-height:1.7; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Server Organisms</h1>
+  <p>NEURAL CELLULAR AUTOMATA &middot; HOST BROKER &middot; MUSE PATCH / VERIFY</p>
+</header>
+<main>
+  <section aria-label="Controls">
+    <h2>Control plane</h2>
+    <div class="phase" id="phase">—</div>
+    <div class="meta" id="meta">connecting…</div>
+    <button id="btn-exploit">1 &nbsp; Launch exploit (SQL injection)</button>
+    <button id="btn-heal" class="heal">2 &nbsp; Organisms heal (Muse patch + verify)</button>
+    <button id="btn-kill" class="danger">Kill switch — withdraw lease</button>
+    <button id="btn-revive">Revive organisms</button>
+    <button id="btn-reset">Reset demo (vulnerable again)</button>
+    <div class="meta">Victim API :18001 &middot; Organism :18002<br>Patcher never verifies itself. Broker verifies on a canary and promotes only on PASS.</div>
+  </section>
+
+  <section aria-label="Organism tissue">
+    <h2>Organism tissue — NCA grid (16 × 16 cells)</h2>
+    <canvas id="grid" width="480" height="480"></canvas>
+    <div class="legend"><span>■ healthy</span><span>■ damaged</span><span>■ signalling</span><span id="alive-count"></span></div>
+    <h2 style="margin-top:18px">Attack / patch evidence</h2>
+    <pre id="evidence">No exploit yet. Press “Launch exploit”.</pre>
+  </section>
+
+  <section aria-label="Swarm and patch">
+    <h2>Swarm communication (encoded log, not encrypted)</h2>
+    <div class="log" id="swarm">—</div>
+    <h2 style="margin-top:18px">Muse patch proposal</h2>
+    <pre id="patch">—</pre>
+    <h2 style="margin-top:14px">Independent verifier</h2>
+    <div class="verdict" id="verdict">Awaiting heal.</div>
+    <h2 style="margin-top:14px">Life — population</h2>
+    <div class="log" id="life">—</div>
+    <h2 style="margin-top:14px">Brain — growable neurons</h2>
+    <div class="log" id="brain">—</div>
+    <h2 style="margin-top:14px">Ask the organisms (English)</h2>
+    <input id="ask-q" type="text" placeholder="how to stop timing side channel in token compare?" style="width:100%;background:#0c0e0f;color:var(--text);border:1px solid var(--line);padding:10px;font-family:var(--mono);font-size:12px">
+    <button id="btn-ask">Ask (learns via Muse if unknown)</button>
+    <button id="btn-heal-auth">Heal class: broken authorization</button>
+    <button id="btn-heal-xss">Heal class: XSS</button>
+    <pre id="ask-a">—</pre>
+  </section>
+</main>
+<footer>
+  Demo flow: Exploit leaks all user records (id/name/email) &rarr; grid centre dies &rarr; swarm converges &rarr; host broker contains &rarr;
+  Muse Spark proposes parameterized-query fix &rarr; broker applies it to a canary &rarr; verifier replays the exploit corpus + normal traffic on the canary &rarr; only on PASS the broker promotes the persisted patch to the live server and tissue regrows.
+  Kill switch lives outside the organisms: withdrawing the lease halts sensing, patching, and movement.
+</footer>
+<script>
+const HOST = location.hostname || "127.0.0.1";
+const ORG = "http://" + HOST + ":18002", VIC = "http://" + HOST + ":18001";
+const TOKEN = new URLSearchParams(location.search).get("token") || sessionStorage.getItem("brokerToken") || "";
+if (TOKEN) sessionStorage.setItem("brokerToken", TOKEN);
+const authHeaders = () => TOKEN ? { "X-Broker-Token": TOKEN } : {};
+const $ = id => document.getElementById(id);
+const post = async p => { const r = await fetch(ORG + p, { method: "POST", headers: authHeaders() }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || ("HTTP " + r.status)); return j; };
+let busy = false;
+
+async function refresh() {
+  try {
+    const s = await (await fetch(ORG + "/state")).json();
+    $("phase").textContent = s.phase.replace(/-/g, " ");
+    $("phase").style.color = s.phase === "healed" ? "var(--green)" : s.phase === "under-attack" ? "var(--red)" : s.phase === "killed" ? "var(--dim)" : "var(--amber)";
+    $("meta").innerHTML = "Lease: <b>" + (s.lease_active ? "ACTIVE" : "WITHDRAWN") + "</b> &middot; Contained: <b>" + s.contained + "</b> &middot; Patched: <b>" + s.patched + "</b><br>Alive cells: <b>" + s.grid.alive_cells + " / " + s.grid.total + "</b>";
+    $("alive-count").textContent = s.grid.alive_cells + " alive";
+    if (s.life) $("life").innerHTML = "Population <b>" + s.life.population + "</b> &middot; births " + s.life.births + " &middot; deaths " + s.life.deaths + " &middot; max gen " + s.life.max_generation + " &middot; Guna: " + (s.guna || "") + "<br>" + (s.life.organisms || []).slice(0, 6).map(o => "#" + o.id + " gen" + o.gen + " E" + o.energy + " fit" + o.fitness).join("<br>");
+    if (s.brain) $("brain").innerHTML = "Neurons <b>" + s.brain.neurons + "</b> &middot; edges " + s.brain.edges + " &middot; instincts " + s.brain.instincts + "<br>Top: " + (s.brain.top_neurons || []).join(", ") + "<br>Peers neurons: " + (s.peers || []).map(p => p.neurons).join(", ");
+    $("btn-exploit").disabled = busy || !s.lease_active;
+    $("btn-heal").disabled = busy || !s.lease_active;
+    const cv = $("grid"), ctx = cv.getContext("2d"), n = 480 / 16;
+    s.grid.cells.forEach((row, y) => row.forEach((c, x) => {
+      ctx.fillStyle = c.d > 0.45 ? "#e5484d" : c.s > 0.55 ? "#e8a317" : ("rgba(70,167,88," + (0.25 + c.h * 0.75) + ")");
+      ctx.fillRect(x * n + 1, y * n + 1, n - 2, n - 2);
+    }));
+    const esc = s2 => String(s2).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    $("swarm").innerHTML = (s.swarm || []).map(m =>
+      "<div><span class=\"ct\">" + esc(m.ts + " " + m.from + " " + m.ciphertext) + "</span><br><span class=\"intent\">" + esc(m.intent) + "</span></div>").join("") || "-";
+    if (s.last_patch) $("patch").textContent = "[" + s.last_patch.source + "] " + s.last_patch.summary + "\n\n- " + s.last_patch.before + "\n+ " + s.last_patch.after;
+    if (s.last_verdict) { $("verdict").textContent = s.last_verdict.verdict + " - " + s.last_verdict.source + " " + JSON.stringify(s.last_verdict.replay); $("verdict").className = "verdict " + (s.last_verdict.verdict === "PASS" ? "pass" : "fail"); }
+    if (!s.lease_active) { $("verdict").textContent = "Organisms halted by kill switch. No sensing, no patching."; }
+  } catch (e) { $("meta").textContent = "Organism offline — start with: docker compose up --build"; }
+}
+$("btn-exploit").onclick = async () => { busy = true; try {
+  const before = await (await fetch(VIC + "/api/user/1 OR 1=1".replace(/ /g, "%20"))).json().catch(() => []);
+  const r = await post("/simulate-exploit");
+  $("evidence").textContent = "Attack replay outside the app:\nGET /api/user/1 OR 1=1 → " + JSON.stringify(before) + "\nLeaked all users: " + r.leaked + "\nOrganism phase: " + r.phase;
+  } catch (e) { $("evidence").textContent = "Failed: " + e.message + " (broker routes need ?token=<BROKER_TOKEN>)"; } finally { busy = false; refresh(); } };
+$("btn-heal").onclick = async () => { busy = true; try { $("evidence").textContent = "Healing: Muse proposing, broker applying to canary, verifier replaying...";
+  const r = await post("/heal");
+  $("evidence").textContent = "Replay after patch:\nattack_blocked=" + r.replay.attack_blocked + "  normal_ok=" + r.replay.normal_ok + "  applied=" + r.replay.applied + "\nVerdict: " + r.verdict.verdict;
+  } catch (e) { $("evidence").textContent = "Heal failed: " + e.message; } finally { busy = false; refresh(); } };
+$("btn-kill").onclick = async () => { await post("/kill"); refresh(); };
+$("btn-revive").onclick = async () => { await post("/revive"); refresh(); };
+$("btn-reset").onclick = async () => { await post("/reset"); $("evidence").textContent = "Reset. Server vulnerable again."; $("patch").textContent = "—"; $("verdict").textContent = "Awaiting heal."; refresh(); };
+$("btn-ask").onclick = async () => { const q = $("ask-q").value.trim(); if (!q) return; $("ask-a").textContent = "Asking..."; try { const r = await fetch(ORG + "/ask", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ question: q }) }); const j = await r.json(); $("ask-a").textContent = (j.answer ? (j.answer.known ? j.answer.answer : "Unknown - queued for LLM") + "\nvia: " + j.answer.via + " | neurons: " + j.brain.neurons : JSON.stringify(j)); } catch (e) { $("ask-a").textContent = "Ask failed: " + e.message; } refresh(); };
+const healClass = cls => async () => { try { const r = await fetch(ORG + "/heal-class", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ class: cls }) }); const j = await r.json(); $("ask-a").textContent = cls + ": " + JSON.stringify(j.verdict || j); } catch (e) { $("ask-a").textContent = cls + " failed: " + e.message; } refresh(); };
+$("btn-heal-auth").onclick = healClass("auth");
+$("btn-heal-xss").onclick = healClass("xss");
+refresh(); setInterval(refresh, 900);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "bomFormat": "CycloneDX-lite",
+  "components": [
+    {
+      "type": "library",
+      "name": "flask",
+      "version": "3.0.3",
+      "from": "organism\\requirements.txt"
+    },
+    {
+      "type": "library",
+      "name": "requests",
+      "version": "2.32.3",
+      "from": "organism\\requirements.txt"
+    },
+    {
+      "type": "library",
+      "name": "flask",
+      "version": "3.0.3",
+      "from": "victim-api\\requirements.txt"
+    },
+    {
+      "type": "container-base",
+      "name": "python:3.12-slim"
+    }
+  ]
+}

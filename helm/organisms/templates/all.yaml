@@ -1,0 +1,89 @@
+{{- if not .Values.brokerToken }}{{ fail "brokerToken is required: --set brokerToken=$(openssl rand -hex 24)" }}{{- end }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: organisms-secret
+type: Opaque
+stringData:
+  BROKER_TOKEN: {{ .Values.brokerToken | quote }}
+  META_API_KEY: {{ .Values.metaApiKey | quote }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: organisms-shared
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: victim-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: victim-api}
+  template:
+    metadata:
+      labels: {app: victim-api}
+    spec:
+      containers:
+        - name: victim-api
+          image: {{ .Values.image.victim }}
+          ports: [{containerPort: 18001}]
+          env:
+            - {name: SHARED_DIR, value: /shared}
+            - {name: PATCH_FILE, value: /shared/patched_app.py}
+            - {name: CANARY_PATCH_FILE, value: /shared/patched_app.py.canary}
+            - name: BROKER_TOKEN
+              valueFrom: {secretKeyRef: {name: organisms-secret, key: BROKER_TOKEN}}
+          volumeMounts: [{name: shared, mountPath: /shared}]
+      volumes: [{name: shared, persistentVolumeClaim: {claimName: organisms-shared}}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: victim-api
+spec:
+  selector: {app: victim-api}
+  ports: [{port: 18001, targetPort: 18001}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: organism
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: organism}
+  template:
+    metadata:
+      labels: {app: organism}
+    spec:
+      containers:
+        - name: organism
+          image: {{ .Values.image.organism }}
+          ports: [{containerPort: 18002}]
+          env:
+            - {name: VICTIM_URL, value: http://victim-api:18001}
+            - {name: PATCH_FILE, value: /shared/patched_app.py}
+            - {name: CANARY_PATCH_FILE, value: /shared/patched_app.py.canary}
+            - {name: ORGANISM_MODE, value: {{ .Values.mode | quote }}}
+            - {name: META_MODEL, value: {{ .Values.metaModel | quote }}}
+            - name: BROKER_TOKEN
+              valueFrom: {secretKeyRef: {name: organisms-secret, key: BROKER_TOKEN}}
+            - name: META_API_KEY
+              valueFrom: {secretKeyRef: {name: organisms-secret, key: META_API_KEY}}
+          volumeMounts: [{name: shared, mountPath: /shared}]
+      volumes: [{name: shared, persistentVolumeClaim: {claimName: organisms-shared}}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: organism
+spec:
+  selector: {app: organism}
+  ports: [{port: 18002, targetPort: 18002}]

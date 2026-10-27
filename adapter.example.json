@@ -1,0 +1,9 @@
+{
+  "class": "sql-injection",
+  "base_url": "http://127.0.0.1:18001",
+  "patch_token": "replace-with-your-random-secret",
+  "live_check": {"path": "/api/user/1%20OR%201=1", "status": 200},
+  "canary_check": {"path": "/api/_canary/user/1%20OR%201=1", "status": 200},
+  "normal_path": "/api/user/1",
+  "patch_webhook": "/api/_apply_patch"
+}

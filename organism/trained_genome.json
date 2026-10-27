@@ -1,0 +1,10 @@
+{
+  "hand_rule_fitness": 0.9657,
+  "trained_fitness": 1.0,
+  "genome": {
+    "heal_rate": 0.321,
+    "harm_rate": 0.092,
+    "signal_decay": 0.646
+  },
+  "generations": 25
+}

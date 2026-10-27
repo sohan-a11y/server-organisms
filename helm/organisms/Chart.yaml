@@ -1,0 +1,6 @@
+apiVersion: v2
+name: server-organisms
+description: Self-healing server organisms (host broker + NCA tissue + Muse patch/verify)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
