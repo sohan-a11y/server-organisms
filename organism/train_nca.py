@@ -5,7 +5,10 @@ Fitness(genome) = alive_after_40_steps - 2*mean_damage, measured - never declare
 Evolves a population with mutation + selection; benchmarks best vs hand rule.
 Saves trained genome to trained_genome.json for the broker to load.
 """
-import json, os, random, sys
+import json
+import os
+import random
+import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from nca import NCAGrid
 from life import Genome

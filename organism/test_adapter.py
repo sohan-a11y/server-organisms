@@ -1,8 +1,8 @@
-import os, sys
+import os
+import sys
 os.environ["BROKER_TOKEN"] = "test-secret-token-123"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "victim-api"))
 sys.path.insert(0, ".")
-import app as victim
 from adapter import AppAdapter
 
 # Serve victim via test client through a tiny requests shim is complex; instead

@@ -5,7 +5,12 @@ corpus there, and only on PASS promotes the persisted patch artifact to the
 live victim. FAIL (or a kill during the cycle) leaves the live victim
 untouched.
 """
-import os, sys, time, base64, threading, requests
+import os
+import sys
+import time
+import base64
+import threading
+import requests
 from flask import Flask, jsonify, request
 from nca import NCAGrid
 import muse_client

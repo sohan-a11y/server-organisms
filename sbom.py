@@ -1,5 +1,6 @@
 """Generate a minimal SBOM (component inventory) for the trust pack."""
-import json, pathlib
+import json
+import pathlib
 root = pathlib.Path(__file__).parent
 comps = []
 for req in sorted(root.rglob("requirements.txt")):

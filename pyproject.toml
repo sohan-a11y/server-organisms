@@ -1,0 +1,5 @@
+[tool.ruff]
+# Hackathon codebase style: compact one-liners (E702) and intentional
+# late imports for optional wiring (E402) are accepted and documented here.
+# Correctness rules (E401/F401/pyflakes) remain enforced.
+lint.ignore = ["E702", "E402"]

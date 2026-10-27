@@ -3,7 +3,11 @@ Update artifact is signed with HMAC(BROKER_TOKEN). Apply writes candidate,
 runs a health callback on the candidate, and only then swaps it in; any
 failure restores last-known-good atomically. Unsigned/bad updates never apply.
 """
-import hashlib, hmac, json, os, time
+import hashlib
+import hmac
+import json
+import os
+import time
 
 def sign(secret, payload: bytes) -> str:
     return hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()

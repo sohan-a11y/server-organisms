@@ -1,5 +1,6 @@
 """Full test suite: unit (nca/brain/life/agents) + live loop. Run: python run_tests.py"""
-import subprocess, sys
+import subprocess
+import sys
 
 SUITE = [
     ("unit smoke", [sys.executable, "smoke_unit.py"]),

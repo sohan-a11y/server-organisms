@@ -1,4 +1,6 @@
-import os, sys, tempfile
+import os
+import sys
+import tempfile
 sys.path.insert(0, ".")
 from control import apply_update, heartbeat, sign
 

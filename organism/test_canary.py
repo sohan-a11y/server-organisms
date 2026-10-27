@@ -5,7 +5,8 @@ Uses Flask test clients only - no sockets. Asserts:
 - live patched only after live apply with valid token; unauthenticated = 403
 - victim fails closed when BROKER_TOKEN is the public demo default
 """
-import os, sys
+import os
+import sys
 os.environ["BROKER_TOKEN"] = "test-secret-token-123"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "victim-api"))
 import importlib

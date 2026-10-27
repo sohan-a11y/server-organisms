@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, ".")
-from life import Population, Organism, Genome
+from life import Population, Organism
 
 p = Population(seed=3)
 assert len(p.members) == 6

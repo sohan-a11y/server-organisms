@@ -1,4 +1,6 @@
-import os, time, requests
+import os
+import time
+import requests
 os.environ["NO_PROXY"] = "127.0.0.1,localhost"
 tok = ""
 for line in open(".env", encoding="utf-8"):

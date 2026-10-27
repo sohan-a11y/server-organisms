@@ -8,4 +8,9 @@ if (-not (Select-String -Path .env -Pattern "^BROKER_TOKEN=" -Quiet)) {
   Write-Host "Generated private BROKER_TOKEN in .env (keep secret)"
 }
 docker compose up --build -d
-Write-Host "Organisms live: dashboard http://127.0.0.1:18000  (set META_API_KEY in .env for live Muse, then: docker compose up -d)"
+$tokLine = Get-Content .env | Where-Object { $_ -match "^BROKER_TOKEN=" } | Select-Object -First 1
+$tok = $tokLine -replace "^BROKER_TOKEN=", ""
+Write-Host ""
+Write-Host "OPEN YOUR DASHBOARD (judge/demo link, contains your private token - do not share publicly):"
+Write-Host "http://127.0.0.1:18000/?token=$tok"
+Write-Host "(Optional: set META_API_KEY in .env for live Muse, then: docker compose up -d)"

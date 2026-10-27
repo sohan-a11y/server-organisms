@@ -60,6 +60,11 @@
   <div class="step" id="step-4"><div class="num">4</div><b>Muse patches, verifier judges</b><span>Patch tested on a canary copy first. Only PASS goes live.</span></div><div class="arrow">→</div>
   <div class="step" id="step-5"><div class="num">5</div><b>Healed & remembered</b><span>Tissue regrows green. Brain learns. Kill switch can end all life anytime.</span></div>
 </div>
+<div id="token-banner" style="display:none;margin:12px 24px 0;background:#fff3d6;border:1.5px solid #d9a441;padding:13px 16px;font-size:14px;line-height:1.55">
+  <b>Demo mode — one step:</b> buttons need your private token. Open the link printed by <span style="font-family:var(--mono)">install.ps1 / install.sh</span>, or paste it here:
+  <input id="token-in" type="text" placeholder="BROKER_TOKEN from .env" style="width:300px;max-width:90%;background:#fff;color:var(--text);border:1px solid var(--line);padding:7px;font-family:var(--mono);font-size:12px">
+  <button id="token-go" style="display:inline-block;width:auto;padding:7px 14px">Use token</button>
+</div>
 <main>
   <section aria-label="Controls">
     <h2>Control plane</h2>
@@ -160,6 +165,8 @@ $("btn-ask").onclick = async () => { const q = $("ask-q").value.trim(); if (!q) 
 const healClass = cls => async () => { try { const r = await fetch(ORG + "/heal-class", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ class: cls }) }); const j = await r.json(); $("ask-a").textContent = cls + ": " + JSON.stringify(j.verdict || j); } catch (e) { $("ask-a").textContent = cls + " failed: " + e.message; } refresh(); };
 $("btn-heal-auth").onclick = healClass("auth");
 $("btn-heal-xss").onclick = healClass("xss");
+if (!TOKEN) { $("token-banner").style.display = "block"; }
+$("token-go").onclick = () => { const v = $("token-in").value.trim(); if (v) location.search = "?token=" + encodeURIComponent(v); };
 refresh(); setInterval(refresh, 900);
 </script>
 </body>

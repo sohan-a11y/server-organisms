@@ -11,4 +11,8 @@ if grep -q "demo-broker-token" .env 2>/dev/null || ! grep -q "^BROKER_TOKEN=" .e
   echo "Generated private BROKER_TOKEN in .env (keep secret)"
 fi
 docker compose up --build -d
-echo "Organisms live: dashboard http://127.0.0.1:18000  (set META_API_KEY in .env for live Muse, then: docker compose up -d)"
+TOK=$(grep "^BROKER_TOKEN=" .env | head -1 | cut -d= -f2-)
+echo ""
+echo "OPEN YOUR DASHBOARD (judge/demo link, contains your private token - do not share publicly):"
+echo "http://127.0.0.1:18000/?token=$TOK"
+echo "(Optional: set META_API_KEY in .env for live Muse, then: docker compose up -d)"

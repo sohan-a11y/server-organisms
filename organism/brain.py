@@ -7,7 +7,7 @@
   instinct, remembers it, and can teach it to swarm peers. Peers grow the same neurons.
 This is a symbolic growable memory, honestly not a transformer - the LLM is the teacher.
 """
-import re, time
+import re
 
 SEED = [
     ("sql injection dumps all users when input is interpolated into query",

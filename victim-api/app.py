@@ -1,4 +1,8 @@
-import os, sys, sqlite3, threading, hashlib
+import os
+import sys
+import sqlite3
+import threading
+import hashlib
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)

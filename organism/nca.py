@@ -5,7 +5,6 @@ its 4 neighbours, like Mordvintsev et al. Growing NCA. Damage spreads from an
 exploited endpoint; healthy neighbours regenerate damaged cells.
 Grid maps to API endpoints: centre = /api/user, ring = host services.
 """
-import random
 
 W = H = 16
 

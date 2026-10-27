@@ -6,7 +6,9 @@ when it has surplus energy, and dies (state deleted) when starved, old, or
 culled by selection. Genome = NCA rule weights; offspring inherit + mutate them.
 Fitness = verified heal performance, measured - never self-declared.
 """
-import random, time, uuid
+import random
+import time
+import uuid
 
 class Genome:
     def __init__(self, heal_rate=0.12, harm_rate=0.25, signal_decay=0.85, mutation=0.05):

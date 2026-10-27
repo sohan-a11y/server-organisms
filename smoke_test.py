@@ -1,4 +1,9 @@
-import subprocess, sys, time, os, secrets, requests
+import subprocess
+import sys
+import time
+import os
+import secrets
+import requests
 
 os.environ["NO_PROXY"] = "127.0.0.1,localhost"
 os.environ["no_proxy"] = "127.0.0.1,localhost"

@@ -12,7 +12,10 @@ persists it as a real source artifact on the shared volume. The verifier's
 deterministic gate includes ``applied``; any LLM opinion is reported
 separately as an advisory field and can never flip the gate.
 """
-import os, json, sys, requests
+import os
+import json
+import sys
+import requests
 
 API_KEY = os.environ.get("META_API_KEY", "")
 MODEL = os.environ.get("META_MODEL", "muse-spark-1.1")
